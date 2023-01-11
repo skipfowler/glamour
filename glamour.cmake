@@ -2,19 +2,24 @@ cmake_minimum_required(VERSION 3.19)
 
 ### glamour.cmake is referenced by all projects using the glamour Loader
 
-function(clone_using_git URL SHA OUT_DIR)
-  find_package(git)
+function(clone_using_git URL OUT_DIR)
+  find_package(Git)
 
   if(NOT GIT_FOUND)
     message(FATAL_ERROR "Unable to find git")
   endif()
 
+  set(GIT_CLONE_COMMAND ${GIT_EXECUTABLE})
+  list(APPEND GIT_CLONE_COMMAND "clone")
+
   if(NOT EXISTS ${OUT_DIR})
     if(DEFINED ENV{ADO_TOKEN})
-
-    else()
-    
+      list(APPEND GIT_CLONE_COMMAND "-c")
+      list(APPEND GIT_CLONE_COMMAND "http.extraheader=\"Basic${B64_ADO_TOKEN}\"")
     endif()
+    
+    list(APPEND GIT_CLONE_COMMAND ${URL})
+    list(APPEND GIT_CLONE_COMMAND ${OUT_DIR})
     
     execute_process(
       COMMAND ${GIT_CLONE_COMMAND}
@@ -39,17 +44,17 @@ if(NOT EXISTS ${GLAMOUR_JSON})
   message(FATAL_ERROR "${GLAMOUR_JSON} does not exist")
 endif()
 
-file(READ ${GLAMOUR_JSON} ${GLAMOUR_JSON_DATA})
+file(READ ${GLAMOUR_JSON} GLAMOUR_JSON_DATA)
 
 # Read url from glamour json data
 if(DEFINED ADO_TOKEN)
-  string(JSON ${GLAMOUR_URL} GET ${GLAMOUR_JSON_DATA} glamour url https)
+  string(JSON GLAMOUR_URL GET ${GLAMOUR_JSON_DATA} glamour url https)
 else()
-  string(JSON ${GLAMOUR_URL} GET ${GLAMOUR_JSON_DATA} glamour url ssh)
+  string(JSON GLAMOUR_URL GET ${GLAMOUR_JSON_DATA} glamour url ssh)
 endif()
 
 # Read sha from glamour json data
-string(JSON ${GLAMOUR_SHA} GET ${GLAMOUR_JSON_DATA} glamour sha)
+string(JSON GLAMOUR_SHA GET ${GLAMOUR_JSON_DATA} glamour sha)
 
 # Read path from glamour json data
 set(GLAMOUR_PATH_IDENTIFIER .glamour/${GLAMOUR_SHA})
@@ -67,4 +72,5 @@ else()
 endif()
 
 # Clone glamour
-clone_using_git(${GLAMOUR_URL} ${GLAMOUR_SHA} ${GLAMOUR_PATH})
+clone_using_git(${GLAMOUR_URL} ${GLAMOUR_PATH})
+switch_checkout_using_git(${GLAMOUR_PATH} ${GLAMOUR_SHA})
