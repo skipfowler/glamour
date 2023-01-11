@@ -45,7 +45,7 @@ file(READ ${GLAMOUR_JSON} ${GLAMOUR_JSON_DATA})
 if(DEFINED ADO_TOKEN)
   string(JSON ${GLAMOUR_URL} GET ${GLAMOUR_JSON_DATA} glamour url https)
 else()
-  string JSON ${GLAMOUR_URL} GET ${GLAMOUR_JSON_DATA} glamour url ssh)
+  string(JSON ${GLAMOUR_URL} GET ${GLAMOUR_JSON_DATA} glamour url ssh)
 endif()
 
 # Read sha from glamour json data
