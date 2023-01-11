@@ -95,4 +95,4 @@ string(JSON GLAMOUR_BRANCH GET ${GLAMOUR_JSON_DATA} glamour branch)
 
 # Clone glamour
 clone_using_git(${GLAMOUR_URL} ${GLAMOUR_BRANCH} ${GLAMOUR_PATH})
-checkout_using_git(${GLAMOUR_PATH} ${GLAMOUR_SHA})
+checkout_using_git(${GLAMOUR_PATH} ${GLAMOUR_BRANCH} ${GLAMOUR_SHA})
