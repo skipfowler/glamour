@@ -42,6 +42,8 @@ endfunction()
 function(checkout_using_git GIT_DIR BRANCH SHA)
   set(GIT_CHECKOUT_COMMAND ${GIT_EXECUTABLE})
   list(APPEND GIT_CHECKOUT_COMMAND "checkout")
+  list(APPEND GIT_CHECKOUT_COMMAND "-B")
+  list(APPEND GIT_CHECKOUT_COMMAND ${BRANCH})
   list(APPEND GIT_CHECKOUT_COMMAND ${SHA})
 
   execute_process(
