@@ -12,7 +12,7 @@ function(clone_using_git URL GIT_DIR BRANCH)
       list(APPEND GIT_CLONE_COMMAND "http.extraheader=\"Basic${B64_ADO_TOKEN}\"")
     endif()
 
-    list(APPEND GIT_CLONE_COMMAND "-B")
+    list(APPEND GIT_CLONE_COMMAND "-b")
     list(APPEND GIT_CLONE_COMMAND ${BRANCH})
     list(APPEND GIT_CLONE_COMMAND ${URL})
     list(APPEND GIT_CLONE_COMMAND ${GIT_DIR})
