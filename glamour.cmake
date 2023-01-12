@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 3.19)
 ### glamour.cmake is referenced by all projects using the glamour Loader
 
 function(clone_using_git URL GIT_DIR BRANCH)
-  find_package(Git)
-
-  if(NOT GIT_FOUND)
-    message(FATAL_ERROR "Unable to find git")
-  endif()
-
   set(GIT_CLONE_COMMAND ${GIT_EXECUTABLE})
   list(APPEND GIT_CLONE_COMMAND "clone")
 
@@ -18,7 +12,7 @@ function(clone_using_git URL GIT_DIR BRANCH)
       list(APPEND GIT_CLONE_COMMAND "http.extraheader=\"Basic${B64_ADO_TOKEN}\"")
     endif()
 
-    list(APPEND GIT_CLONE_COMMAND "-b")
+    list(APPEND GIT_CLONE_COMMAND "-B")
     list(APPEND GIT_CLONE_COMMAND ${BRANCH})
     list(APPEND GIT_CLONE_COMMAND ${URL})
     list(APPEND GIT_CLONE_COMMAND ${GIT_DIR})
