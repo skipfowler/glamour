@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 ### glamour.cmake is referenced by all projects using the glamour Loader
 
-function(clone_using_git URL BRANCH OUT_DIR)
+function(clone_using_git URL GIT_DIR BRANCH)
   find_package(Git)
 
   if(NOT GIT_FOUND)
@@ -12,7 +12,7 @@ function(clone_using_git URL BRANCH OUT_DIR)
   set(GIT_CLONE_COMMAND ${GIT_EXECUTABLE})
   list(APPEND GIT_CLONE_COMMAND "clone")
 
-  if(NOT EXISTS ${OUT_DIR})
+  if(NOT EXISTS ${GIT_DIR})
     if(DEFINED ENV{ADO_TOKEN})
       list(APPEND GIT_CLONE_COMMAND "-c")
       list(APPEND GIT_CLONE_COMMAND "http.extraheader=\"Basic${B64_ADO_TOKEN}\"")
@@ -21,7 +21,7 @@ function(clone_using_git URL BRANCH OUT_DIR)
     list(APPEND GIT_CLONE_COMMAND "-b")
     list(APPEND GIT_CLONE_COMMAND ${BRANCH})
     list(APPEND GIT_CLONE_COMMAND ${URL})
-    list(APPEND GIT_CLONE_COMMAND ${OUT_DIR})
+    list(APPEND GIT_CLONE_COMMAND ${GIT_DIR})
     
     execute_process(
       COMMAND ${GIT_CLONE_COMMAND}
@@ -34,19 +34,19 @@ function(clone_using_git URL BRANCH OUT_DIR)
 
     execute_process(
       COMMAND ${GIT_PULL_COMMAND}
+      WORKING_DIRECTORY ${GIT_DIR}
     )
   endif()
 endfunction()
 
 function(checkout_using_git GIT_DIR BRANCH SHA)
   set(GIT_CHECKOUT_COMMAND ${GIT_EXECUTABLE})
-  list(APPEND GIT_CHECKOUT_COMMAND "-c")
-  list(APPEND GIT_CHECKOUT_COMMAND ${GIT_DIR})
   list(APPEND GIT_CHECKOUT_COMMAND "checkout")
   list(APPEND GIT_CHECKOUT_COMMAND ${SHA})
 
   execute_process(
     COMMAND ${GIT_CHECKOUT_COMMAND}
+    WORKING_DIRECTORY ${GIT_DIR}
   )
 endfunction()
 
@@ -94,5 +94,5 @@ endif()
 string(JSON GLAMOUR_BRANCH GET ${GLAMOUR_JSON_DATA} glamour branch)
 
 # Clone glamour
-clone_using_git(${GLAMOUR_URL} ${GLAMOUR_BRANCH} ${GLAMOUR_PATH})
+clone_using_git(${GLAMOUR_URL} ${GLAMOUR_PATH} ${GLAMOUR_BRANCH})
 checkout_using_git(${GLAMOUR_PATH} ${GLAMOUR_BRANCH} ${GLAMOUR_SHA})
